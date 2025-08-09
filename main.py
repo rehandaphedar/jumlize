@@ -53,10 +53,11 @@ def check():
                     print(verse_key)
 
 
-match sys.argv[1]:
-    case "split":
-        split()
-    case "check":
-        check()
-    case default:
-        exit()
+def main():
+    match sys.argv[1]:
+        case "split":
+            split()
+        case "check":
+            check()
+        case _:
+            exit()
