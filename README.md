@@ -3,8 +3,10 @@
 A program to split Qurʾān translation text into sentences.
 
 This program was mainly created for use by [tilavid](https://sr.ht/~rehandaphedar/tilavid).
-Therefore, `data.json` is the English translation [Saheeh International from Quranic Universal Library](https://qul.tarteel.ai/resources/translation/193).
+Therefore, the `data.json` used, and subsequent configuration etc. was with the English translation [Saheeh International from Quranic Universal Library](https://qul.tarteel.ai/resources/translation/193) (`simple.json`) in mind.
 However, this program can be adapted to other languages and translations as well.
+
+Readily segmented and manually fixed translations can be found under `results/`.
 
 # Dependencies
 
@@ -14,8 +16,10 @@ However, this program can be adapted to other languages and translations as well
 # Installation
 
 ```sh
-pipx install git+https://git.sr.ht/~rehandaphedar/jumlize
+pip install git+https://git.sr.ht/~rehandaphedar/jumlize
 ```
+
+You can also use `pipx`.
 
 # Usage
 
