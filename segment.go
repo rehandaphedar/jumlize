@@ -27,6 +27,7 @@ func runSegmentCommand() {
 	promptPath := segmentFlagSet.String("template", "prompt.tmpl", "Path to prompt template")
 	translationPath = segmentFlagSet.String("translation", "translation.json", "Path to JSON file to read from")
 	verseKeys := segmentFlagSet.String("verse_keys", "all", "Comma separated list of verse keys to process. Set to 'all' to process all verses.")
+	overwrite := segmentFlagSet.Bool("overwrite", false, "Whether to overwrite existing segments")
 
 	segmentFlagSet.Parse(os.Args[2:])
 
@@ -86,7 +87,7 @@ func runSegmentCommand() {
 	for _, verseKey := range verseKeysToProcess {
 		verse := translation[verseKey]
 
-		if strings.Join(segmentsToStrings(verse.Segments), " ") == verse.Text {
+		if strings.Join(segmentsToStrings(verse.Segments), " ") == verse.Text && !*overwrite {
 			continue
 		}
 
