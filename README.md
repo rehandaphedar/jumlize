@@ -5,7 +5,7 @@ A program to segment Qurʾān translation text.
 # Installation
 
 ```sh
-go install git.sr.ht/~rehandaphedar/lafzize/v2@latest
+go install git.sr.ht/~rehandaphedar/jumlize/v2@latest
 ```
 
 # Usage
