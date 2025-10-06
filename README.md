@@ -1,81 +1,54 @@
 # Introduction
 
-A program to split Qurʾān translation text into sentences.
-
-This program was mainly created for use by [tilavid](https://sr.ht/~rehandaphedar/tilavid).
-Therefore, the `data.json` used, and subsequent configuration etc. was with the English translation [Saheeh International from Quranic Universal Library](https://qul.tarteel.ai/resources/translation/193) (`simple.json`) in mind.
-However, this program can be adapted to other languages and translations as well.
-
-Readily segmented and manually fixed translations can be found under `results/`.
-
-# Dependencies
-
-- `python`
-- `spacy`
+A program to segment Qurʾān translation text.
 
 # Installation
 
 ```sh
-pip install git+https://git.sr.ht/~rehandaphedar/jumlize
+go install git.sr.ht/~rehandaphedar/lafzize/v2@latest
 ```
 
-You can also use `pipx`.
-
 # Usage
+
+Obtain a translation from the [Quranic Universal Library (QUL)](https://qul.tarteel.ai/resources/translation) (`simple.json`), or from any other source with the same schema.
+
+The program comes with 3 subcommands:
+- `segment`
+- `check`
+- `clear`
+
+For each subcommand, you can get documentation for flags by running:
+
+```
+jumlize [subcommand] -h
+```
+
+## Segment
 
 Run:
 
 ```sh
-jumlize split [language_code] [data_file] [sentences_file]
+jumlize segment -api_key "[GEMINI_API_KEY]"
 ```
 
-Where:
+The command will add a `segments` field to all verses in the file.
 
-- `language_code`: Two letter language code
+## Check
 
-- `data_file`: JSON file of the following format:
-
-```json
-{
-	"[verse_key]": {
-		"t": "[translation]"
-	},
-	...
-}
-```
-
-- `sentences_file`: JSON file to output segmented text to in the following format:
-
-```json
-{
-	"[verse_key]": [
-		"[sentence_1]",
-		"[sentence_2]",
-		...
-	],
-	...
-}
-```
-
-Example command:
+Run:
 
 ```sh
-jumlize split en data.json sentences.json
+jumlize check
 ```
 
-The generated `sentences.json` will likely have some errors. For English, these mostly tend to be due to spacy splitting verses on `[` or `"` and then failing to preserve the exact text.
-Run the following command to print a list of verse keys whose segmented text doesn't yield the original text on joining with a `" "`:
+The command will print a list of verse keys whose segmented text doesn't yield the original text on joining with a `" "`.
+
+## Clear
+
+Run:
 
 ```sh
-jumlize check [data_file] [sentences_file]
+jumlize clear
 ```
 
-Example command:
-
-```sh
-jumlize check data.json sentences.json
-```
-
-After this, fix these errors manually or using another tool. Rerun the command and repeat until no verse keys are printed.
-
-Do note that as stated above, the `check` command only checks if the segments of a particular verse key yield the original text on joinig. It does not check for anomalous sentence boundaries being used or any other error that still causes the segments to yield the original text.
+The command will remove the `segments` field from all verses in the file.
