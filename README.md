@@ -10,7 +10,7 @@ go install git.sr.ht/~rehandaphedar/jumlize/v3@latest
 
 # Usage
 
-From the [Quranic Universal Library (QUL)](https://qul.tarteel.ai/resources/translation) (or from any other source with the same schema) obtain the following:
+From the [Quranic Universal Library (QUL)](https://qul.tarteel.ai/resources) (or from any other source with the same schema) obtain the following:
 - [Ayah Metadata](https://qul.tarteel.ai/resources/quran-metadata) (`quran-metadata-ayah.json`).
 - A [translation](https://qul.tarteel.ai/resources/translation) (`-simple.json`).
 
