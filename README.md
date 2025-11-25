@@ -5,12 +5,14 @@ A program to segment Qurʾān translation text.
 # Installation
 
 ```sh
-go install git.sr.ht/~rehandaphedar/jumlize/v2@latest
+go install git.sr.ht/~rehandaphedar/jumlize/v3@latest
 ```
 
 # Usage
 
-Obtain a translation from the [Quranic Universal Library (QUL)](https://qul.tarteel.ai/resources/translation) (`-simple.json`), or from any other source with the same schema.
+From the [Quranic Universal Library (QUL)](https://qul.tarteel.ai/resources/translation) (or from any other source with the same schema) obtain the following:
+- [Ayah Metadata](https://qul.tarteel.ai/resources/quran-metadata) (`quran-metadata-ayah.json`).
+- A [translation](https://qul.tarteel.ai/resources/translation) (`-simple.json`).
 
 The program comes with 3 subcommands:
 - `segment`
@@ -55,4 +57,4 @@ The command will remove the `segments` field from all verses in the file.
 
 # Results
 
-Pre segmented translations can be found under `results/`.
+Segmented translations can be found under `results/`.
