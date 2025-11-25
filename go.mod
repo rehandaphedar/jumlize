@@ -1,4 +1,4 @@
-module git.sr.ht/~rehandaphedar/jumlize/v2
+module git.sr.ht/~rehandaphedar/jumlize/v3
 
 go 1.25.1
 

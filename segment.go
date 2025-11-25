@@ -24,8 +24,9 @@ func runSegmentCommand() {
 	model = segmentFlagSet.String("model", "gemini-2.5-flash", "Model")
 	temperature := segmentFlagSet.Float64("temperature", 0, "Temperature")
 	thinkingBudget := segmentFlagSet.Int64("thinking_budget", 0, "Thinking budget")
-	promptPath := segmentFlagSet.String("template", "prompt.tmpl", "Path to prompt template")
-	translationPath = segmentFlagSet.String("translation", "translation.json", "Path to JSON file to read from")
+	promptPath := segmentFlagSet.String("template", "prompt.md", "Path to prompt template")
+	translationPath = segmentFlagSet.String("translation", "en-sahih-international-simple.json", "Path to JSON file to read from")
+	metadataPath = segmentFlagSet.String("metadata", "quran-metadata-ayah.json", "Path to JSON file to read from")
 	verseKeys := segmentFlagSet.String("verse_keys", "all", "Comma separated list of verse keys to process. Set to 'all' to process all verses.")
 	overwrite := segmentFlagSet.Bool("overwrite", false, "Whether to overwrite existing segments")
 
@@ -33,6 +34,7 @@ func runSegmentCommand() {
 
 	printConfig(segmentFlagSet)
 	loadTranslation()
+	loadMetadata()
 
 	channel := make(chan os.Signal, 1)
 	signal.Notify(channel, os.Interrupt, syscall.SIGTERM)
@@ -87,7 +89,7 @@ func runSegmentCommand() {
 	for _, verseKey := range verseKeysToProcess {
 		verse := translation[verseKey]
 
-		if strings.Join(segmentsToStrings(verse.Segments), " ") == verse.Text && !*overwrite {
+		if sanityCheck(verseKey, verse.Text, verse.Segments) && !*overwrite {
 			continue
 		}
 
@@ -100,12 +102,12 @@ func runSegmentCommand() {
 			break
 		}
 
-		if strings.Join(strs, " ") != verse.Text {
-			log.Println("Segments do not return original string on joining...")
-			continue
+		verse.Segments = stringsToSegments(strs)
+
+		if !sanityCheck(verseKey, verse.Text, verse.Segments) {
+			log.Println("Sanity check failed...")
 		}
 
-		verse.Segments = stringsToSegments(strs)
 		translation[verseKey] = verse
 	}
 
@@ -113,11 +115,12 @@ func runSegmentCommand() {
 }
 
 func segmentText(text string) ([]string, error) {
+	b, _ := json.Marshal(text)
 	contents := []*genai.Content{
 		{
 			Parts: []*genai.Part{
 				{
-					Text: text,
+					Text: string(b),
 				},
 			},
 		},

@@ -5,7 +5,9 @@ import (
 	"flag"
 	"log"
 	"os"
+	"regexp"
 	"slices"
+	"strings"
 )
 
 type Translation map[string]Verse
@@ -20,8 +22,23 @@ type Segment struct {
 	Words []int  `json:"words,omitempty"`
 }
 
+type Metadata map[string]VerseMetadata
+
+type VerseMetadata struct {
+	Id          int    `json:"id"`
+	SurahNumber int    `json:"surah_number"`
+	AyahNumber  int    `json:"ayah_number"`
+	VerseKey    string `json:"verse_key"`
+	WordsCount  int    `json:"words_count"`
+	Text        string `json:"text"`
+}
+
 var translationPath *string
 var translation Translation
+var metadataPath *string
+var metadata Metadata
+
+var wordsCountByVerseKey = make(map[string]int)
 
 func printConfig(flagSet *flag.FlagSet) {
 	flags := make(map[string]string)
@@ -46,6 +63,24 @@ func loadTranslation() {
 	}
 }
 
+func loadMetadata() {
+	log.Printf("Loading metadata from %s...\n", *metadataPath)
+
+	metadataFile, err := os.ReadFile(*metadataPath)
+	if err != nil {
+		log.Fatalf("error reading metadata file: %v\n", err)
+	}
+
+	err = json.Unmarshal(metadataFile, &metadata)
+	if err != nil {
+		log.Fatalf("error unmarshaling metadata JSON: %v\n", err)
+	}
+
+	for _, verse := range metadata {
+		wordsCountByVerseKey[verse.VerseKey] = verse.WordsCount
+	}
+}
+
 func save() {
 	log.Printf("Saving translation to %s...\n", *translationPath)
 	translationJSON, err := json.Marshal(translation)
@@ -57,6 +92,26 @@ func save() {
 	if err != nil {
 		log.Fatalf("error while writing translation JSON to file: %v", err)
 	}
+}
+
+func sanityCheck(verseKey, text string, segments []Segment) bool {
+	if text != strings.Join(segmentsToStrings(segments), " ") {
+		return false
+	}
+
+	if len(segments) > wordsCountByVerseKey[verseKey] {
+		return false
+	}
+
+	re := regexp.MustCompile(`^\[[^\]]+\],?$`)
+
+	for _, segment := range segments {
+		if re.MatchString(segment.Text) {
+			return false
+		}
+	}
+
+	return true
 }
 
 func segmentsToStrings(segments []Segment) []string {
